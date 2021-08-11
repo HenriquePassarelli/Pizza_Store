@@ -26,12 +26,14 @@ pizzaJson.forEach(pizza => {
     document.querySelector(".content").appendChild(container);
 
 });
-let index;
+
+let index, size, value, amount = '01';
 function getPizza(event) {
     let pizzaId = (event.target.id) - 1;
     index = pizzaId;
     return Modal.open(pizzaId), index;
 }
+
 
 const Modal = {
 
@@ -51,10 +53,9 @@ const Modal = {
                     <h1>${flavor.name}</h1>
                     <p>${flavor.description}</p>
                     <div class="size">
-                        <a id="size01" >Small</a>
-                        <a id="size02">Regular</a>
-                        <a id="size03">Large</a>
-
+                        <a id="00" class="size01" >Small</a>
+                        <a id="01" class="size02" >Regular</a>
+                        <a id="02" class="size03" >Large</a>
                     </div>
                     <div class="price">
                         <h2 >R$ <span id="price">${flavor.price.toFixed(2)}</span></h2>
@@ -72,9 +73,52 @@ const Modal = {
             </div>
         `
 
+        Modal.size()
+        Modal.price(amount)
         document.getElementById('close').addEventListener('click', Modal.close);
         document.querySelector('.minus').addEventListener('click', Modal.decrease);
         document.querySelector('.plus').addEventListener('click', Modal.increase);
+        document.querySelector('.addTo').addEventListener('click', Cart.addTo);
+        document.querySelector('.size01').addEventListener('click', Modal.size);
+        document.querySelector('.size02').addEventListener('click', Modal.size);
+        document.querySelector('.size03').addEventListener('click', Modal.size);
+
+    },
+
+    size(event) {
+        let x;
+        if (event == undefined) {
+            x = "01"
+            
+        } else {
+            x = event.target.id;
+
+            switch (x) {
+                case "00":
+                    document.getElementById('01').classList.remove('active');
+                    document.getElementById('02').classList.remove('active');
+                    document.getElementById(x).classList.add('active');
+                    Modal.price(amount);
+                case "01":
+                    document.getElementById('00').classList.remove('active');
+                    document.getElementById('02').classList.remove('active');
+                    document.getElementById(x).classList.add('active');
+                    Modal.price(amount);
+    
+    
+                case "02":
+                    document.getElementById('00').classList.remove('active');
+                    document.getElementById('01').classList.remove('active');
+                    document.getElementById(x).classList.add('active');
+                    Modal.price(amount);
+    
+    
+            }
+
+            return size = x;
+
+        }
+        
 
     },
 
@@ -106,25 +150,89 @@ const Modal = {
     },
 
     price(amount) {
-        let value = pizzaJson[index].price.toFixed(2);
+        value = pizzaJson[index].price.toFixed(2);
+        switch (size) {
+            case '00':
+                value = value - 2;
+                break;
+            case '02':
+                value = value + 2;
+                break;
+            
+        }
         let price = (value * amount).toFixed(2);
         value = price.toString();
         document.querySelector('#price').innerHTML = value;
-        console.log(value);
+        return dataCart(value, amount, index, size);
     },
 
     close() {
         document.querySelector('.modal').style.display = "none";
     }
 }
+//document.querySelector(".active").addEventListener('change', Modal.price(amount));
+
+let cart;
+let queue = [];
+function dataCart(value, amount, index, size) {
+    cart = [index, value, amount, size];
+    console.log(cart);
+}
+
 
 const Cart = {
 
-    addTo() {
+    open() {
+        let hidden = document.querySelector('.cart-container');
+        let display = getComputedStyle(hidden).display;
 
+        if (display == "none") {
+            hidden.style.display = "flex";
+            document.querySelector('.cart-container').innerHTML = `
+            <div class="cart-content">
+                <h2>Meu Carrinho</h2>
+                <div class="cart-products">
+                </div>
+                <div >
+                    <h3>Total: R$<span class="cart-total"></span></h3> </h3>
+                </div>
+
+            </div>
+        `
+            queue.forEach(products => {
+                console.log(products);
+                let product = document.createElement('DIV');
+                product.classList.add('products')
+                product.setAttribute('id', products[0]);
+                product.innerHTML = `
+                <h3>${pizzaJson[products[0]].name} </h3>
+                <h4>${products[2]}</h4>
+                <h4>${products[3]}</h4>
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M16 9v10H8V9h8m-1.5-6h-5l-1 1H5v2h14V4h-3.5l-1-1zM18 7H6v12c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7z"/></svg>
+                
+            `
+                document.querySelector('.cart-total').innerHTML = products[1];
+                document.querySelector('.cart-products').appendChild(product);
+            });
+
+        } else if (display == "flex") {
+            hidden.style.display = "none";
+        }
+
+
+    },
+
+    addTo() {
+        queue.push(cart);
+
+        document.querySelector('.hidden').style.opacity = "1"
+
+        return queue;
     },
 
     removeFrom() {
 
     }
 }
+
+document.querySelector('.cart').addEventListener('click', Cart.open)

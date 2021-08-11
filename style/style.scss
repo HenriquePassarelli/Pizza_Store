@@ -3,6 +3,7 @@
   padding: 0;
 }
 
+$background-color: rgb(228, 228, 228);
 $background-color-green: rgb(1, 202, 1);
 $negative-background-color: rgb(204, 1, 1);
 
@@ -20,13 +21,49 @@ header {
     font-size: 2.5rem;
   }
   .client {
+    display: flex;
     svg {
       width: 2rem;
       height: auto;
+      cursor: pointer;
+      margin-left: 0.5rem;
+    }
+    .cart {
+      display: flex;
+      align-items: baseline;
+      .hidden {
+        position: sticky;
+        bottom: 0;
+        width: 0.5rem;
+        height: 0.5rem;
+        background-color: red;
+        border-radius: 50%;
+        opacity: 0;
+      }
     }
   }
 }
 main {
+  .cart-container {
+    display: none;
+    justify-content: flex-end;
+    .cart-content {
+      position: absolute;
+
+      display: flex;
+      flex-direction: column;
+      width: 250px;
+      padding: 0.8rem;
+
+      background-color: rgba(149, 149, 149, 60%);
+
+      .products {
+        display: flex;
+        align-items:center;
+        justify-content: space-between;
+      }
+    }
+  }
   .content {
     margin: 2rem;
     display: grid;
@@ -112,7 +149,7 @@ main {
               opacity: 0.8;
             }
           }
-          #size02 {
+          .active{
             background-color: $background-color-green;
           }
         }
