@@ -27,7 +27,7 @@ pizzaJson.forEach(pizza => {
 
 });
 
-let index, size, value, amount = '01';
+let index, size, value, amount = '01', price = 0;
 function getPizza(event) {
     let pizzaId = (event.target.id) - 1;
     index = pizzaId;
@@ -89,36 +89,33 @@ const Modal = {
         let x;
         if (event == undefined) {
             x = "01"
-            
+            console.log(x)
         } else {
             x = event.target.id;
+        }
+        switch (x) {
+            case "00":
+                document.getElementById('01').classList.remove('active');
+                document.getElementById('02').classList.remove('active');
+                document.getElementById(x).classList.add('active');
 
-            switch (x) {
-                case "00":
-                    document.getElementById('01').classList.remove('active');
-                    document.getElementById('02').classList.remove('active');
-                    document.getElementById(x).classList.add('active');
-                    Modal.price(amount);
-                case "01":
-                    document.getElementById('00').classList.remove('active');
-                    document.getElementById('02').classList.remove('active');
-                    document.getElementById(x).classList.add('active');
-                    Modal.price(amount);
-    
-    
-                case "02":
-                    document.getElementById('00').classList.remove('active');
-                    document.getElementById('01').classList.remove('active');
-                    document.getElementById(x).classList.add('active');
-                    Modal.price(amount);
-    
-    
-            }
+            case "01":
+                document.getElementById('00').classList.remove('active');
+                document.getElementById('02').classList.remove('active');
+                document.getElementById(x).classList.add('active');
 
-            return size = x;
+
+
+            case "02":
+                document.getElementById('00').classList.remove('active');
+                document.getElementById('01').classList.remove('active');
+                document.getElementById(x).classList.add('active');
+
+
 
         }
-        
+
+        return size = x;
 
     },
 
@@ -151,15 +148,6 @@ const Modal = {
 
     price(amount) {
         value = pizzaJson[index].price.toFixed(2);
-        switch (size) {
-            case '00':
-                value = value - 2;
-                break;
-            case '02':
-                value = value + 2;
-                break;
-            
-        }
         let price = (value * amount).toFixed(2);
         value = price.toString();
         document.querySelector('#price').innerHTML = value;
@@ -170,7 +158,6 @@ const Modal = {
         document.querySelector('.modal').style.display = "none";
     }
 }
-//document.querySelector(".active").addEventListener('change', Modal.price(amount));
 
 let cart;
 let queue = [];
@@ -184,11 +171,9 @@ const Cart = {
 
     open() {
         let hidden = document.querySelector('.cart-container');
-        let display = getComputedStyle(hidden).display;
 
-        if (display == "none") {
-            hidden.style.display = "flex";
-            document.querySelector('.cart-container').innerHTML = `
+        hidden.style.display = "flex";
+        document.querySelector('.cart-container').innerHTML = `
             <div class="cart-content">
                 <h2>Meu Carrinho</h2>
                 <div class="cart-products">
@@ -199,27 +184,33 @@ const Cart = {
 
             </div>
         `
-            queue.forEach(products => {
-                console.log(products);
-                let product = document.createElement('DIV');
-                product.classList.add('products')
-                product.setAttribute('id', products[0]);
-                product.innerHTML = `
+        queue.forEach(products => {
+            console.log(products);
+            let product = document.createElement('DIV');
+            product.classList.add('products')
+            product.setAttribute('id', products[0]);
+            product.innerHTML = `
                 <h3>${pizzaJson[products[0]].name} </h3>
-                <h4>${products[2]}</h4>
-                <h4>${products[3]}</h4>
-                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M16 9v10H8V9h8m-1.5-6h-5l-1 1H5v2h14V4h-3.5l-1-1zM18 7H6v12c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7z"/></svg>
+                <h4 name="amount">${products[2]}</h4>
+                <h4 name="size">${pizzaJson[products[0]].sizes[parseInt(products[3])]}</h4>
+                <svg id="${products[0]}" class="remove" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M16 9v10H8V9h8m-1.5-6h-5l-1 1H5v2h14V4h-3.5l-1-1zM18 7H6v12c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7z"/></svg>
                 
             `
-                document.querySelector('.cart-total').innerHTML = products[1];
-                document.querySelector('.cart-products').appendChild(product);
-            });
+            price = parseInt(products[1]);
+            total();
+            document.querySelector('.cart-products').appendChild(product);
+        });
 
-        } else if (display == "flex") {
-            hidden.style.display = "none";
-        }
+        document.querySelector('.remove').addEventListener('click', Cart.removeFrom)
+        document.querySelector('.cart').removeEventListener('click', Cart.open)
+        document.querySelector('.cart').addEventListener('click', Cart.close)
 
 
+    },
+    close() {
+        document.querySelector('.cart-container').style.display = "none";
+        document.querySelector('.cart').removeEventListener('click', Cart.close);
+        document.querySelector('.cart').addEventListener('click', Cart.open);
     },
 
     addTo() {
@@ -230,9 +221,24 @@ const Cart = {
         return queue;
     },
 
-    removeFrom() {
+    removeFrom(event) {
+        console.log(queue);
+        let itemId = event.target.id;
+        console.log(itemId);
 
+        let item = queue.findIndex(item => queue[item[itemID]] == itemId);
+        console.log(item)
+        
     }
 }
 
+function total() {
+    price += price;
+    document.querySelector('.cart-total').innerHTML = price.toFixed(2);
+    console.log(price)
+
+ return price;
+}
+
+document.querySelector('.content').addEventListener('click', Cart.close)
 document.querySelector('.cart').addEventListener('click', Cart.open)
