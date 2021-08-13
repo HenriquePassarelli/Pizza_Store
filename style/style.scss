@@ -9,14 +9,14 @@ $negative-background-color: rgb(204, 1, 1);
 
 body {
   font-family: Poppins, sans-serif;
-  background-color: rgb(228, 228, 228);
+  background-color: rgb(250, 250, 250);
 }
 header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0.5rem;
-  background-color: rgba(149, 149, 149, 30%);
+  background-color: rgba(202, 202, 202, 0.3);
   h1 {
     font-size: 2.5rem;
   }
@@ -55,12 +55,33 @@ main {
       width: 250px;
       padding: 0.8rem;
 
-      background-color: rgba(149, 149, 149, 60%);
-
+      background-color: rgba(180, 180, 180, 0.6);
+      border-bottom-left-radius: 20%;
       .products {
         display: flex;
-        align-items:center;
+        align-items: center;
         justify-content: space-between;
+
+        .remove:hover {
+          cursor: pointer;
+          fill: red;
+        }
+      }
+
+      .finish {
+        margin-top: 0.5rem;
+        display: flex;
+        justify-content: center;
+
+        .buy {
+          cursor: pointer;
+          font-size: 1rem;
+          outline: none;
+          background-color: $background-color-green;
+          padding: 0.5rem 0.7rem;
+          border-radius: 0.5rem;
+          border: none;
+        }
       }
     }
   }
@@ -106,94 +127,130 @@ main {
       padding: 2rem;
       background-color: white;
       display: flex;
-      flex-wrap: wrap;
-      gap: 3rem;
+      flex-direction: column;
       margin: 2rem;
       border-radius: 0.5rem;
 
       justify-content: center;
 
-      .flavor {
+      .close-container {
         display: flex;
-        flex-direction: column;
-        justify-content: center;
-        img {
-          width: 250px;
+        align-items: center;
+        justify-content: flex-end;
+        margin-bottom: 1rem;
+        svg {
+          cursor: pointer;
+          &:hover {
+            fill: $negative-background-color;
+          }
         }
       }
-      .aside {
-        width: 16rem;
 
-        .close-container {
+      .modal-content {
+        display: flex;
+        flex-wrap: wrap;
+
+        gap: 3rem;
+
+        .flavor {
           display: flex;
-          align-items: center;
-          justify-content: flex-end;
-          margin-bottom: 1rem;
-          svg {
-            cursor: pointer;
-            &:hover {
-              fill: $negative-background-color;
-            }
+          flex-direction: column;
+          justify-content: center;
+          img {
+            width: 250px;
           }
         }
-        .size {
-          margin: 1.5rem 0;
+        .aside {
+          width: 22rem;
 
-          a {
-            border: 1px solid gray;
-            border-radius: 0.2rem;
-            padding: 0.2rem 0.5rem;
-            cursor: pointer;
-
-            &:hover {
-              opacity: 0.8;
-            }
-          }
-          .active{
-            background-color: $background-color-green;
-          }
-        }
-        .price {
-          display: flex;
-          align-items: center;
-          margin: 2rem 0;
-          .amount-container {
-            margin-left: 2rem;
+          .size {
             display: flex;
             align-items: center;
-            .amount {
+            flex-wrap: wrap;
+            justify-content: space-around;
+            margin: 1.5rem 0;
+
+            a {
+              display: flex;
+              align-items: center;
               border: 1px solid gray;
               border-radius: 0.2rem;
-              padding: 0.4rem 0.7rem;
-              margin: 0 0.5rem;
-              cursor: default;
-            }
-            svg {
+              padding: 0.2rem 0.5rem;
               cursor: pointer;
-            }
-            .minus:hover {
+              margin-bottom: 1rem;
+
+              .slice::before {
+                content: "-";
+              }
+              .slice {
+                margin-left: 0.2rem;
+                color: rgb(75, 75, 75);
+              }
               &:hover {
-                fill: $negative-background-color;
+                opacity: 0.8;
               }
             }
-            .plus:hover {
-              fill: $background-color-green;
+            .active {
+              background-color: $background-color-green;
+            }
+          }
+          .price {
+            display: flex;
+            align-items: center;
+            margin: 2rem 0;
+            .amount-container {
+              margin-left: 2rem;
+              display: flex;
+              align-items: center;
+              .amount {
+                border: 1px solid gray;
+                border-radius: 0.2rem;
+                padding: 0.4rem 0.7rem;
+                margin: 0 0.5rem;
+                cursor: default;
+              }
+              svg {
+                cursor: pointer;
+              }
+              .minus:hover {
+                &:hover {
+                  fill: $negative-background-color;
+                }
+              }
+              .plus:hover {
+                fill: $background-color-green;
+              }
+            }
+          }
+          .addTo {
+            border: 1px solid gray;
+            border-radius: 0.2rem;
+            background-color: $background-color-green;
+            padding: 0.3rem 0.5rem;
+            text-align: center;
+
+            cursor: pointer;
+
+            &:hover {
+              opacity: 0.9;
             }
           }
         }
-        .addTo {
-          border: 1px solid gray;
-          border-radius: 0.2rem;
-          background-color: $background-color-green;
-          padding: 0.3rem 0.5rem;
-          text-align: center;
+      }
+    }
+  }
+}
 
-          cursor: pointer;
+@media (max-width: 762px) {
+  main .modal {
+    overflow-y: scroll;
 
-          &:hover {
-            opacity: 0.9;
-          }
-        }
+    .modal-container {
+      margin-top: 20rem;
+      width: 250px;
+
+      .modal-content {
+        justify-content: center;
       }
     }
   }
