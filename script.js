@@ -27,7 +27,7 @@ pizzaJson.forEach(pizza => {
 
 });
 
-let index, size, value, amount , price = 0;
+let index, size, value, amount, price = 0;
 function getPizza(event) {
     let pizzaId = (event.target.id) - 1;
     index = pizzaId;
@@ -76,7 +76,7 @@ const Modal = {
         `
 
         Modal.size()
-        Modal.price(amount)
+        Modal.price(amount = 1)
         document.getElementById('close').addEventListener('click', Modal.close);
         document.querySelector('.minus').addEventListener('click', Modal.decrease);
         document.querySelector('.plus').addEventListener('click', Modal.increase);
@@ -93,7 +93,6 @@ const Modal = {
         let x;
         if (event == undefined) {
             x = "01"
-            console.log(x)
         } else {
             x = event.target.id;
         }
@@ -151,12 +150,12 @@ const Modal = {
     },
 
     price(amount) {
-        if (amount == undefined) amount = "01"; 
+        if (amount == undefined) amount = "01";
         value = pizzaJson[index].price.toFixed(2);
         let price = (value * amount).toFixed(2);
         value = price.toString();
         document.querySelector('#price').innerHTML = value;
-        return dataCart(value, amount, index, size), amount;
+        return dataCart(amount, index, size), amount;
     },
 
     close() {
@@ -166,9 +165,8 @@ const Modal = {
 
 let cart;
 let queue = [];
-function dataCart(value, amount, index, size) {
-    cart = [index, value, amount, size];
-    console.log(cart);
+function dataCart(amount, index, size) {
+    cart = [index, amount, size];
 
     return cart;
 }
@@ -195,7 +193,6 @@ const Cart = {
             </div>
         `
         queue.forEach(products => {
-            console.log(products);
             let product = document.createElement('DIV');
             product.classList.add('products')
             product.setAttribute('id', products.id);
@@ -203,13 +200,14 @@ const Cart = {
                 <h3>${pizzaJson[products.id].name} </h3>
                 <h4 name="amount">${products.amount}</h4>
                 <h4 name="size">${pizzaJson[products.id].sizes[parseInt(products.size)]}</h4>
-                <svg id="${products.id}" class="remove" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M16 9v10H8V9h8m-1.5-6h-5l-1 1H5v2h14V4h-3.5l-1-1zM18 7H6v12c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7z"/></svg>
-                
+                <div class="remove-cart" >
+                    <svg id="${products.identifier}"class="remove" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path id="${products.identifier}" d="M16 9v10H8V9h8m-1.5-6h-5l-1 1H5v2h14V4h-3.5l-1-1zM18 7H6v12c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7z"/></svg>
+                </div>
             `
             price = parseFloat(products.value);
-            total();
             document.querySelector('.cart-products').appendChild(product);
-            document.querySelector(".remove").addEventListener('click', Cart.removeFrom)
+
+            total();
 
         });
 
@@ -220,6 +218,11 @@ const Cart = {
             window.location.reload();
         })
 
+        let remove = document.querySelectorAll('.remove');
+        for (const key of remove) {
+            key.addEventListener('click', Cart.removeFrom);
+        }
+
     },
     close() {
         document.querySelector('.cart-container').style.display = "none";
@@ -228,50 +231,61 @@ const Cart = {
     },
 
     addTo() {
-        let identifier = cart[0] + '@' + cart[3];
-        amount = cart[2];
+        let identifier = cart[0] + '@' + cart[2];
+        amount = cart[1];
         let key = queue.findIndex((item) => item.identifier == identifier);
         let cartItem = {
             identifier: identifier,
             id: cart[0],
-            value: cart[1],
-            amount: parseInt(cart[2]),
-            size: cart[3]
+            value: pizzaJson[cart[0]].price,
+            amount: parseInt(cart[1]),
+            size: cart[2]
         };
-        console.log(key);
         if (key > -1) {
-            queue[key].amount += parseInt(amount); 
-            console.log(queue[key].amount)
+            queue[key].amount += parseInt(amount);
         } else {
             queue.push(cartItem);
         }
-        
+
         document.querySelector('.hidden').style.opacity = "1"
-        console.log(queue)
         return queue, Modal.close();
-},
+    },
 
     removeFrom(event) {
-        console.log(queue);
-        let itemId = parseInt((event.target.id));
-        console.log(parseInt(itemId));
+        let itemId = (event.target.id);
+        let item = queue.findIndex((item) => item.identifier == itemId);
 
-        let item = queue.indexof();
-        queue.splice(item, 1);
-        console.log(item)
-
-        return queue, Modal.open();
+        if (queue[item].amount > 1) {
+            queue[item].amount -= 1;
+        } else {
+            queue.splice(item, 1);
+            if (!queue.length) {
+                document.querySelector('.hidden').style.opacity = "0";
+                alert("Carrinho vazio, continue comprando !!");                
+            }
+        }
+        Cart.open();
+        total();
     }
 }
 
 function total() {
-    console.log(price)
+    let total = 0;
+    for (const key in queue) {
+        if (queue.length > 0) {
+            let item = queue.find((item) => item.id == queue[key].id);
+            total += parseFloat(item.value) * item.amount;
 
-    document.querySelector('.cart-total').innerHTML = price.toFixed(2);
-    console.log(price)
+        }
+    }
+    total = total.toFixed(2);
+    document.querySelector(".cart-total").innerHTML = total;
 
-    return price;
 }
 
 document.querySelector('.content').addEventListener('click', Cart.close)
 document.querySelector('.cart').addEventListener('click', Cart.open)
+
+
+
+//var index = Array.prototype.slice.call(el.parentElement.children).indexOf(el)
