@@ -1,5 +1,9 @@
 # Pizza_Store
 
+### `npm install`
+
+### `npm start`
+
 ### [Demo](https://pizza-store-ten.vercel.app/)
 
 ![Screenshot from 2021-08-14 19-13-59](https://user-images.githubusercontent.com/71354731/129461384-ad532d6e-4c91-4b7a-9e2c-a0644ec130b7.png)
